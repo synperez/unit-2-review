@@ -1,41 +1,49 @@
 let key = "ZOuRKwhTTnw4VjRGFHTL6RbL1eaffn1G"
+document.addEventListener('DOMContentLoaded',()=> {
+  let form = document.querySelector('form');
+  let content = document.querySelector('.content');
+  let select = document.querySelector('select');
+  let input = document.querySelector('#userInput');
+  let submit = document.querySelector('#submit');
 
-document.addEventListener("DOMContentLoaded",()=> {
-   let form =  document.querySelector('form')
-   let content = document.querySelector('.content')
-   let select = document.querySelector('select')
-   let input = document.querySelector('#userInput')
-   let submit = document.querySelector('#submit')
-   let limit = 10
-   let search = 'pie'
-
-   let h1 = document.createElement('h1')
-
-form.addEventListener("sunbit",() =>{
-    giphySearch(search, limit)
-})
-
-   const giphySearch = async (userInput,userLimit) =>{
-       try {
-           let res = await axios.get(`https://api.giphy.com/v1/gifs/search?api_key=${key}&q=${userInput}&limit=${userLimit}`)
-           console.log(res);
-           
-       } catch (error) {
-           console.log(error);
-           
-       }
-        
-   }
   
-   const populateSelect = () =>{
-       for(let i = 1; i <= 25; i++){
-           let option = document.createElement('option')
-           option.innerText = i
-           option.value = i
-        select.appendChild(option)
-       }
+  let h1 = document.createElement('h1');
 
+  form.addEventListener('submit',(event)=> {
+    event.preventDefault();
+    giphySearch(input.value,select.value)
+  })
 
-   }
-   populateSelect()
+  
+  const showGif = gifArr => {
+   gifArr.forEach(gif =>{
+     let image = document.createElement('img');
+    image.src =gif.images.downsized.url;
+    content.appendChild(image);
+    
+   })
+
+  }
+
+  const giphySearch = async(userInput,userLimit) => {
+    try {
+      content.innerHTML = ''
+      let res = await axios.get(`https://api.giphy.com/v1/gifs/search?api_key=${key}&q=${userInput}&limit=${userLimit}`);
+      showGif(res.data.data)
+      }catch(err){
+        console.log(err)
+      }
+
+  }
+  
+  const populateSelect = ()=> {
+    for(let i = 1; i <= 25; i++){
+      let option = document.createElement('option');
+      option.innerText = i;
+      option.value = i;
+      select.appendChild(option);
+    }
+  }
+  populateSelect();
+
 })
